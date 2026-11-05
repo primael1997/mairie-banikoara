@@ -10,7 +10,9 @@ class ProfileController extends Controller
 {
     public function index()
     {
-        return view('admin.profile.index');
+        $user = Auth::user();
+
+        return view('admin.profile.index', compact('user'));
     }
 
     public function updateProfile(Request $request)
@@ -44,7 +46,13 @@ class ProfileController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
-        toastr()->success('Profile Password Updated Successfully!');
-        return redirect()->back();
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        toastr()->success('Mot de passe modifié avec succès. Veuillez vous reconnecter.');
+
+        return redirect()->route('admin.login');
     }
 }

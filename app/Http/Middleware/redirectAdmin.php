@@ -20,6 +20,10 @@ class redirectAdmin
             return redirect()->route('admin.dashboard');
         }
 
+        if (Auth::guard($guard)->check() && Auth::user()->role == 0) {
+            return redirect()->route('admin.actualites.index');
+        }
+
         return $next($request);
     }
 }

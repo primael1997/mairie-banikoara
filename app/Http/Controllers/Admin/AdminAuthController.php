@@ -21,6 +21,10 @@ class AdminAuthController extends Controller
             return redirect()->route('admin.dashboard'); // Redirect to the admin dashboard
         }
 
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'isAdmin' => false, 'role' => true])) {
+            return redirect()->route('admin.actualites.index'); // Redirect to the admin dashboard
+        }
+
         return redirect()->route('admin.login')->with('error', 'Invalid credentials.');
     }
 

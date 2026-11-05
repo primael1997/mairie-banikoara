@@ -23,6 +23,22 @@
     <!-- Custom styles for this template-->
     <link href="{{asset('admin/css/sb-admin-2.min.css')}}" rel="stylesheet">
 
+    <style>
+        #toast-container > .toast-success {
+            background-color: #28a745 !important;
+            color: #fff !important;
+        }
+
+        #toast-container > .toast-error {
+            background-color: #dc3545 !important;
+            color: #fff !important;
+        }
+
+        #toast-container > .toast {
+            opacity: 1 !important;
+        }
+    </style>
+
 </head>
 
 <body id="page-top">

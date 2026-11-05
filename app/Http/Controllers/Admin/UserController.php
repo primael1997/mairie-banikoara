@@ -42,15 +42,21 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $password = Str::random(10);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($password),
+        $request->validate([
+            'name' => 'required','string',
+            'email' => 'required','email','exists:users,email',
+            'role' => 'required','integer',
         ]);
 
-        Mail::to($user->email)->send(new UserAccountCreated($password));
+        $user = new User();
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->isAdmin = $request->role === 1 ? 1 : 0;;
+        $user->role = $request->role;
+        $user->password = bcrypt('Mairie@2026');
+
+        $user->save();
 
         toastr('Utilisateur ajouté avec succès!', 'success');
 

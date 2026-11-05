@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\redirectAdmin;
+use App\Http\Middleware\TrackPageVisits;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
@@ -21,11 +22,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'redirectAdmin' => \App\Http\Middleware\redirectAdmin::class,
+            'trackVisits' => \App\Http\Middleware\TrackPageVisits::class,
         ]);
 
         $middleware->alias([
             'admin' => AdminMiddleware::class,
             'redirectAdmin' => redirectAdmin::class,
+            'trackVisits' => TrackPageVisits::class,
         ]);
 
         //

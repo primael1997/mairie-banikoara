@@ -30,9 +30,12 @@
                 </div>
 
                 <div class="form-group row">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Télephone <span class="text-danger">* </span>:</b></label>
+                    <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Rôle <span class="text-danger">* </span>:</b></label>
                     <div class="col-sm-10">
-                        <input type="text" name="phone" value="{{ old('phone') }}" class="form-control" id="inputEmail3" placeholder="Télephone">
+                        <select name="role" id="" class="form-control">
+                            <option value="0">Adminidtrateur</option>
+                            <option value="1">Gestionnaire d'article</option>
+                        </select>
                     </div>
                 </div>
 

@@ -21,7 +21,7 @@
                             <th>#</th>
                             <th>Nom</th>
                             <th>Email</th>
-                            <th>Télephone</th>
+                            <th>Rôle</th>
                             <th class="text-center" width="200">Action</th>
                         </tr>
                     </thead>
@@ -31,7 +31,7 @@
                                 <td>{{ ++$key}}</td>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
-                                <td>{{ $user->telephone }}</td>
+                                <td>{{ $user->role }}</td>
                                 <td class="text-center">
                                     <a class="btn btn-primary" href=""><i class="fas fa-edit"></i></a>
                                     <a class="btn btn-danger delete-item" href=""><i class="fas fa-trash"></i></a>

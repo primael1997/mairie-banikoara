@@ -5,10 +5,12 @@ use File;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AncienMaire;
+use App\Traits\ImageUploadTrait;
 use Illuminate\Support\Facades\Storage;
 
 class AncienMaireController extends Controller
 {
+    use ImageUploadTrait;
      /**
      * Affiche les détails d’un ancien maire spécifique.
      */
@@ -74,7 +76,7 @@ class AncienMaireController extends Controller
 
         $data = $request->only(['nom', 'fonction', 'mandat', 'biographie']);
 
-        $imagePath = $this->updateImage($request, 'image', 'uploads/anciens_maires', $anciens_maires->photo);
+        $imagePath = $this->updateImage($request, 'photo', 'uploads/anciens_maires', $anciens_maires->photo);
 
         $data['photo'] = $imagePath;
 

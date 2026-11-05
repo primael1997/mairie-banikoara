@@ -58,6 +58,7 @@
                 <div class="card-body">
                     <form action="{{route('admin.password.update')}}" method="POST">
                         @csrf
+                        @method('PUT')
 
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label">Mot de passe actuel :</label>
@@ -74,7 +75,7 @@
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label">Confirmation Mot de passe :</label>
                             <div class="col-sm-8">
-                                <input type="password" name="confirmation_password" class="form-control">
+                                <input type="password" name="password_confirmation" class="form-control">
                             </div>
                         </div>
                         <div class="text-center mt-5">

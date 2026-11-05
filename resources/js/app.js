@@ -5,7 +5,17 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+import Swal from 'sweetalert2';
 
+AOS.init({
+    duration: 600,
+    once: true,
+    offset: 100,
+})
+
+window.Swal = Swal;
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({

@@ -7,6 +7,7 @@ use App\Models\Actualite;
 use App\Models\Categorie;
 use App\Traits\ImageUploadTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -23,6 +24,8 @@ class ActualiteController extends Controller
 
     public function create()
     {
+        Gate::authorize('manage-news');
+
         $categories = Categorie::orderBy('libelle','asc')->get();
 
         return view('admin.actualites.create', compact('categories'));
@@ -30,7 +33,9 @@ class ActualiteController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        Gate::authorize('manage-news');
+
+        $request->validate([
             'titre' => 'required|string|max:255',
             'contenu' => 'required',
             'date_publication' => 'required|date',
@@ -57,6 +62,8 @@ class ActualiteController extends Controller
 
     public function show($slug)
     {
+        Gate::authorize('manage-news');
+
         $actualite = Actualite::where('slug', $slug)->first();
 
         if (!$actualite) {
@@ -69,6 +76,10 @@ class ActualiteController extends Controller
 
     public function edit(Actualite $actualite)
     {
+        Gate::authorize('manage-news');
+
+        $this->authorize('update', $actualite);
+
         $categories = Categorie::all();
 
         return view('admin.actualites.edit', compact('actualite', 'categories'));
@@ -77,12 +88,14 @@ class ActualiteController extends Controller
 
     public function update(Request $request, Actualite $actualite)
     {
+        Gate::authorize('manage-news');
+
         $request->validate([
             'titre' => 'required|string|max:255',
             'contenu' => 'required',
             'date_publication' => 'required|date',
             'categorie_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3000',
         ]);
 
         $actualite->find($actualite->id);
@@ -104,7 +117,9 @@ class ActualiteController extends Controller
 
     public function destroy(Actualite $actualite)
     {
-        $actualite = Actualite::findOrFail($actualite);
+        Gate::authorize('manage-news');
+        
+        $actualite = Actualite::where('id',$actualite->id)->first();
         $this->deleteImage($actualite->image);
         $actualite->delete();
 

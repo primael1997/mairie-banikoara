@@ -13,16 +13,47 @@ use App\Http\Controllers\Admin\MembreController;
 use App\Http\Controllers\Admin\MotDuMaireController;
 use App\Http\Controllers\Admin\PartenaireController;
 use App\Http\Controllers\Admin\AncienMaireController;
+use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\SecretariatMembreController;
 use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Front\CitoyenController;
+use App\Http\Controllers\Front\CommuneController;
 use App\Http\Controllers\Front\HomeController;
+use App\Http\Controllers\Front\MairieController;
+use App\Http\Controllers\Front\PostController;
+use App\Http\Controllers\Front\ServiceController as FrontServiceController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+Route::middleware('trackVisits')->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/actualites', [PostController::class, 'index'])->name('actualites.index');
+    Route::get('/actualites/{post:slug}', [PostController::class, 'show'])->name('actualites.show');
+
+    Route::get('/services', [FrontServiceController::class, 'index'])->name('services.index');
+    Route::get('/services/tarifs/{id}', [FrontServiceController::class, 'show'])->name('services.tarif');
+
+    Route::get('/maire/elus-municipaux', [MairieController::class, 'elus'])->name('front.elus');
+    Route::get('/mairie/secretariat-executif', [MairieController::class, 'executif'])->name('front.executif');
+    Route::get('/maire/mot-du-maire', [MairieController::class, 'maire'])->name('front.maire');
+    Route::get('/mairie/mandatures', [MairieController::class, 'anciensMaires'])->name('front.mandature');
+    Route::get('/mairie/organigramme', [MairieController::class, 'organigramme'])->name('front.organigramme');
+
+
+    Route::get('/commune/presentation', [CommuneController::class, 'presentation'])->name('commune.presentation');
+    Route::get('/commune/historique', [CommuneController::class, 'historique'])->name('commune.historique');
+    Route::get('/commune/arrondissement', [CommuneController::class, 'arrondissement'])->name('commune.arrondissement');
+    Route::get('/commune/projets', [CommuneController::class, 'projet'])->name('commune.projet');
+
+    Route::get('/documentation', [CitoyenController::class, 'document'])->name('document.index');
+    Route::get('/citoyen/contact', [CitoyenController::class, 'contact'])->name('citoyen.contact');
+    Route::get('/citoyen/requete', [CitoyenController::class, 'requete'])->name('citoyen.requete');
+    Route::post('/citoyen/requete', [CitoyenController::class, 'store'])->name('citoyen.store');
+});
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -33,7 +64,7 @@ Route::group(['prefix' => 'admin','middleware' => 'redirectAdmin'], function() {
     Route::post('login', [AdminAuthController::class, 'login'])->name('admin.login.post');
 });
 
-Route::group(['middleware' =>['auth', 'verified'], 'prefix' => 'admin', 'as' => 'admin.'], function(){
+Route::group(['middleware' =>['auth', 'verified', 'can:manage-news'], 'prefix' => 'admin', 'as' => 'admin.'], function(){
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile', [ProfileController::class, 'updatePassword'])->name('password.update');
@@ -45,6 +76,7 @@ Route::group(['middleware' =>['auth', 'verified'], 'prefix' => 'admin', 'as' => 
     Route::resource('categories-documents', CategorieDocumentController::class, [
         'parameters' => ['categories-documents' => 'categorieDocument']
     ]);
+
     Route::patch('/categories-documents/{categorieDocument}/toggle-active', [CategorieDocumentController::class, 'toggleActive'])->name('categories-documents.toggle-active');
     Route::post('/categories-documents/update-order', [CategorieDocumentController::class, 'updateOrder'])->name('categories-documents.update-order');
 
@@ -56,6 +88,8 @@ Route::group(['middleware' =>['auth', 'verified'], 'prefix' => 'admin', 'as' => 
     Route::put('/membres/{id}', [MembreController::class, 'update'])->name('membres.update');
     Route::delete('/membres/{id}', [MembreController::class, 'destroy'])->name('membres.destroy');
     Route::get('/membres/{id}', [MembreController::class, 'show'])->name('membres.show');
+
+    Route::resource('evenements', EventController::class);
 
     // ======= GESTION DU MOT DU MAIRE =======
     Route::get('/mot-du-maire', [MotDuMaireController::class, 'edit'])->name('mot-du-maire.index');
@@ -102,5 +136,14 @@ Route::group(['middleware' =>['auth', 'verified'], 'prefix' => 'admin', 'as' => 
     Route::patch('/documents/{document}/toggle-public', [DocumentController::class, 'togglePublic'])->name('documents.toggle-public');
     Route::patch('/documents/{document}/toggle-archive', [DocumentController::class, 'toggleArchive'])->name('documents.toggle-archive');
     Route::get('/documents/statistiques', [DocumentController::class, 'statistiques'])->name('documents.statistiques');
+
+    Route::get('setting', [SettingController::class, 'index'])->name('setting.index');
+
+    Route::put('general-setting-update', [SettingController::class, 'generalSettingUpdate'])->name('general-setting.update');
+    Route::put('email-setting-update', [SettingController::class, 'emailConfigSettingUpdate'])->name('email-setting.update');
+    Route::put('logo-setting-update', [SettingController::class, 'logoSettingUpdate'])->name('logo-setting.update');
 });
+
+
+
 require __DIR__.'/auth.php';

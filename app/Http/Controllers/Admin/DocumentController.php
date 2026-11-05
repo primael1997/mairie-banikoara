@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Document;
 use App\Models\CategorieDocument;
+use App\Traits\ImageUploadTrait;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class DocumentController extends Controller
 {
+    use ImageUploadTrait;
     /**
      * Afficher la liste des documents (admin)
      */
@@ -42,7 +44,6 @@ class DocumentController extends Controller
     {
         $validated = $request->validate([
             'titre' => 'required|string|max:255',
-            'description' => 'nullable|string',
             'categorie_document_id' => 'nullable|exists:categories_documents,id',
             'date_publication' => 'nullable|date',
             'fichier' => 'required|mimes:pdf|max:10240',
@@ -51,23 +52,22 @@ class DocumentController extends Controller
 
         $document = new Document();
 
-        $file_doc = $this->uploadFile($request, 'uploads/documents', 'files');
         $file = $request->file('fichier');
+        $taille_fichier = round($file->getSize() / (1024 * 1024),2);
 
-        $filename = time() . '_' . $file->getClientOriginalName();
+        $file_doc = $this->uploadFile($request, 'fichier', 'uploads/documents');
 
         $document->titre = $validated['titre'];
-        $document->description = $validated['description'];
         $document->categorie_document_id = $validated['categorie_document_id'];
         $document->date_publication = $validated['date_publication'];
         $document->fichier = $file_doc;
-        $document->public = $validated['public'];
-        $document->taille_fichier = $file->getSize();
+        $document->taille_fichier = $taille_fichier;
 
         $document->save();
 
         toastr('Document mise à jour avec succès.','success');
-        return redirect()->route('admin.actualites.index');
+        
+        return redirect()->route('admin.mairie.documents.index');
     }
 
     /**
