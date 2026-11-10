@@ -28,17 +28,7 @@ class HomeController extends Controller
                 'excerpt' => $post->description,
                 'category' => $post->categorie?->libelle,
                 'date' => $post->created_at?->locale('fr')->translatedFormat('d F Y'),
-            ])
-            ->withViewData(fn ($post) => [
-                'meta' => [
-                    'titre'       => $post->titre,
-                    'description' => Str::limit(strip_tags($post->content), 180),
-                    'image'       => asset('storage/' . $post->image),
-                    'url'         => route('actualites.show', $post->slug),
-                    'type'        => 'article',
-                ],
-            ]
-        );
+            ]);
 
         $services = CategorieService::orderBy('id','asc')->take(4)->get(['id','libelle','icone','desc']);
 
